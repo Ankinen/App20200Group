@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const FamilySchema = new mongoose.Schema(
   {
-    familyname: {
+    familyName: {
       type: String,
       required: true,
       index: { unique: true }

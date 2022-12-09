@@ -4,27 +4,23 @@ const mongoose = require('mongoose');
 //Määritetään mallin tietokantaskeema
 const ListSchema = new mongoose.Schema(
     {
-        content: {
+        listName: {
             type: String,
-            required: true
+            required: true,
         },
-        author: {
+        creator: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
             required: true
         },
+        item: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Item',
+        },
         disabled: {
             type: Boolean,
             required: true
-        },
-        favoriteCount: {
-            type: Number,
-            default: 0
-        },
-        favoritedBy: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
-        }]
+        }
     },
 
     {

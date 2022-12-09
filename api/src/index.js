@@ -4,11 +4,9 @@ const { ApolloServer } = require('apollo-server-express');
 require('dotenv').config();
 const { connections } = require('mongoose');
 const jwt = require('jsonwebtoken');
-// Helmet middle ware has security-minded middleware functions
-// helps the application from common web vulnerabilitis
-// const helmet = require('helmet');
-// CORS Cross-Origin Resource Sharing
+
 const cors = require('cors');
+
 // limit the query complexity
 const depthLimit = require('graphql-depth-limit');
 const { createComplexityLimitRule } = require('graphql-validation-complexity');
@@ -47,7 +45,7 @@ const getUser = token => {
 
 async function startApolloServer(typeDefs, resolvers){
 
-    // 5. Luodaan uusi Apollo-serveri
+    // create new Apollo server
     const server = new ApolloServer({ 
         typeDefs, 
         resolvers,
@@ -64,8 +62,6 @@ async function startApolloServer(typeDefs, resolvers){
 
     await server.start();
 
-    // 6. Asetetaan GraphQL-serveri midlewareksi (matkan varrella 
-    // suoritettavaksi ohjelmapalaseksi) ja asetetaan myös GraphQL endpointin loppuosa
     server.applyMiddleware({ app, path: '/api' });
 
     return server;
@@ -74,8 +70,6 @@ async function startApolloServer(typeDefs, resolvers){
 
 startApolloServer(typeDefs, resolvers)
 
-// 7. Aletaan kuunnella asiakkaiden pyyntöjä portista,
-// joka on annettu muuttujassa port
 app.listen({ port }, () =>
     console.log(
         `GraphQL Server running at http://localhost:${port}`
