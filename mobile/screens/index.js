@@ -1,5 +1,5 @@
 import React from "react";
-import { createAppContainer } from 'react-navigation';
+import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 // importing screen components
