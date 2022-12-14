@@ -3,50 +3,77 @@ const { gql } = require('apollo-server-express');
 
 module.exports = gql`
 scalar DateTime
-type Note {
+type List {
     id: ID!
-    content: String!
-    author: User!
+    listName: String!
+    creator: User!
+    listFamily: Family!
     disabled: Boolean!
     createdAt: DateTime!
     updatedAt: DateTime!
-    favoriteCount: Int!
-    favoritedBy: [User]
 }
 
 type User {
     id: ID!
     username: String!
     email: String
-    avatar: String!
-    notes: [Note!]!
-    favorites: [Note!]!
+    lists: [List]
+    families: [Family]
 }
 
-type NoteFeed {
-    notes: [Note]!
+type Item {
+    id: ID!
+    itemName: String!
+    quantity: String
+    list: List!
+}
+
+type Family {
+    id: ID!
+    familyName: String!
+    familyMember: [User!]!
+    lists: [List]
+}
+
+type ListFeed {
+    lists: [List]!
+    cursor: String!
+    hasNextPage: Boolean!
+}
+
+type familyFeed {
+    families: [Family]!
     cursor: String!
     hasNextPage: Boolean!
 }
 
 type Query {
-    notes: [Note!]!
-    allNotes: [Note!]!
-    note(id: ID): Note!
+    lists: [List!]!
+    list(id: ID): List!
     user(username: String!): User
     users: [User!]!
     me: User!
-    noteFeed(cursor: String): NoteFeed
+    family(familyName: String): Family
+    families: [Family!]!
+    item(id: ID): Item!
+    items: [Item!]!
+    listFeed(cursor: String): ListFeed
+    familyFeed(cursor: String): FamilyFeed
 }
 
 type Mutation {
-    newNote(content: String!): Note!
-    deleteNote(id: ID!): Boolean!
-    updateNote(id: ID!, content: String!): Note!
+    newList(listName: String!): List!
+    deleteList(id: ID!): Boolean!
+    updateList(id: ID!, listName: String!): Note!
+    newFamily(familyName: String!): Family!
+    deleteFamily(id: ID!): Boolean!
+    updateFamily(id: ID!, familyName: String!): Family!
     signUp(username: String!, email: String!, password: String!): String!
-    signIn(username: String!, email: String!, password: String!): String!
-    toggleFavorite(id: ID!): Note!
-    deactivateNote(id: ID!): Note!
-    activateNote(id: ID!): Note!
+    LogIn(username: String!, email: String!, password: String!): String!
+    newItem(itemName: String!, quantity: String!): String!
+    deactivateItem(id: ID): Item!
+    activateItem(id: ID): Item!
+    deactivateList(id: ID!): List!
+    activateList(id: ID!): List!
 }
 `;

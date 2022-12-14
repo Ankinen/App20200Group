@@ -1,14 +1,15 @@
 // Require the mongoose library
+// Require the mongoose library
 const mongoose = require('mongoose');
 
 //Määritetään mallin tietokantaskeema
-const noteSchema = new mongoose.Schema(
+const ListSchema = new mongoose.Schema(
     {
-        content: {
+        listName: {
             type: String,
-            required: true
+            required: true,
         },
-        author: {
+        creator: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
             required: true
@@ -17,14 +18,10 @@ const noteSchema = new mongoose.Schema(
             type: Boolean,
             required: true
         },
-        favoriteCount: {
-            type: Number,
-            default: 0
-        },
-        favoritedBy: [{
+        listFamily: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
-        }]
+            ref: 'Family'
+        }
     },
 
     {
@@ -34,7 +31,7 @@ const noteSchema = new mongoose.Schema(
 );
 
 // Luo malli
-const Note = mongoose.model('Note', noteSchema);
+const List = mongoose.model('List', ListSchema);
 
 // Paljasta malli
-module.exports = Note;
+module.exports = List;

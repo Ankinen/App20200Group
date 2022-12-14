@@ -1,9 +1,13 @@
-const Note = require('./note');
+const List = require('./list');
 const User = require('./user');
+const Family = require('./family');
+const Item = require('./item');
 
 const models = {
-    Note,
-    User
+    List,
+    Item,
+    User,
+    Family
 };
 
 module.exports = models;
