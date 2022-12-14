@@ -41,7 +41,7 @@ type ListFeed {
     hasNextPage: Boolean!
 }
 
-type familyFeed {
+type FamilyFeed {
     families: [Family]!
     cursor: String!
     hasNextPage: Boolean!
@@ -49,6 +49,7 @@ type familyFeed {
 
 type Query {
     lists: [List!]!
+    allLists: [List!]!
     list(id: ID): List!
     user(username: String!): User
     users: [User!]!
@@ -64,16 +65,17 @@ type Query {
 type Mutation {
     newList(listName: String!): List!
     deleteList(id: ID!): Boolean!
-    updateList(id: ID!, listName: String!): Note!
+    updateList(id: ID!, listName: String!): List!
+    deactivateList(id: ID!): List!
+    activateList(id: ID!): List!
     newFamily(familyName: String!): Family!
     deleteFamily(id: ID!): Boolean!
     updateFamily(id: ID!, familyName: String!): Family!
     signUp(username: String!, email: String!, password: String!): String!
-    LogIn(username: String!, email: String!, password: String!): String!
+    logIn(username: String!, email: String!, password: String!): String!
     newItem(itemName: String!, quantity: String!): String!
     deactivateItem(id: ID): Item!
     activateItem(id: ID): Item!
-    deactivateList(id: ID!): List!
-    activateList(id: ID!): List!
+    
 }
 `;

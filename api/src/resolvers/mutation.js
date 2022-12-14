@@ -7,65 +7,64 @@ const {
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const gravatar = require('../util/gravatar');
-
 // API mutation code:
 
 module.exports = {
-    newNote: async (parent, args, { models, user }) => {
+    newList: async (parent, args, { models, user, family }) => {
       // if there is no user on the context, throw an authentication error
       if (!user) {
-        throw new AuthenticationError('You must be signed in to create a note');
+        throw new AuthenticationError('You must be signed in to create a list');
       }
 
-      return await models.Note.create({
-          content: args.content,
-          author: mongoose.Types.ObjectId(user.id),
+      return await models.List.create({
+          listName,
+          creator: mongoose.Types.ObjectId(user.id),
+          familyName: mongoose.Types.ObjectId(family.id),
           disabled: false
       });
     },
-    deleteNote: async (parent, { id }, { models, user }) => {
+    deleteList: async (parent, { id }, { models, user }) => {
         // if not a user, throw an Authentication error
         if (!user) {
-          throw new AuthenticationError('You must be signed in to delete a note');
+          throw new AuthenticationError('You must be signed in to delete a list');
         }
 
-        const note = await models.Note.findById(id);
-        // if the note owner and the current user don't match, throw a forbidden error
-        if (note && String(note.author) !== user.id) {
-          throw new ForbiddenError("You don't have permission to delete the note");
+        const list = await models.List.findById(id);
+        // if the list owner and the current user don't match, throw a forbidden error
+        if (list && String(list.creator) !== user.id) {
+          throw new ForbiddenError("You don't have permission to delete the list");
         }
 
         try {
-          // if everything checks out, remove the note
-            await models.Note.findOneAndRemove({_id:id});
+          // if everything checks out, remove the list
+            await models.List.findOneAndRemove({_id:id});
             return true;
         } catch (err) {
             // if there is an error, return false
             return false;
         }
     },
-    updateNote: async (parent, { content, id}, { models, user }) => {
+    updateList: async (parent, { listName, id}, { models, family, user }) => {
         // if not a user, throw an Authentication error
         if (!user) {
-          throw new AuthenticationError('You must be signed in to update a note');
+          throw new AuthenticationError('You must be signed in to update a list');
         }
 
-        // find the note
-        const note = await models.Note.findById(id);
-        // if the note owner and the current user don't match, throw a forbidden error
-        if (note && String(note.author) !== user.id) {
-          throw new ForbiddenError("You don't have the permission to upate the note");
+        // find the list
+        const list = await models.list.findById(id);
+        // if the list owner and the current user don't match, throw a forbidden error
+        if (list && String(family.familyMember) !== user.id) {
+          throw new ForbiddenError("You don't have the permission to upate the list");
         }
 
-        // update the note in the db and return the updated note
-        return await models.Note.findOneAndUpdate(
+        // update the list in the db and return the updated list
+        return await models.List.findOneAndUpdate(
             {
                 _id: id,
             },
             {
                 $set: {
-                    content
+                    listName
                 }
             },
             {
@@ -79,15 +78,12 @@ module.exports = {
         email = email.trim().toLowerCase();
         // hash the password
         const hashed = await bcrypt.hash(password, 10);
-        // create the gravatar url
-        const avatar = gravatar(email);
         try {
           // käytetään mongoosen mallia, await pakottaa
           // odottamaan, että käyttäjä on luotu
           const user = await models.User.create({
             username,
             email,
-            avatar,
             password: hashed
           });
     
@@ -99,7 +95,7 @@ module.exports = {
         }
     },
 
-    signIn: async (parent, { username, email, password }, { models }) => {
+    logIn: async (parent, { username, email, password }, { models }) => {
       if (email) {
         // normalize email address
         email = email.trim().toLowerCase();
@@ -124,64 +120,21 @@ module.exports = {
       return jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     },
     
-    toggleFavorite: async (parent, { id }, { models, user }) => {
-      //if no user context is passed, throw authentication error
-      if (!user) {
-        throw new AuthenticationError();
-      }
-
-      // check to see if the user has already favorited the note
-      let noteCheck = await models.Note.findById(id);
-      const hasUser = noteCheck.favoritedBy.indexOf(user.id);
-
-      if (hasUser >= 0) {
-        return await models.Note.findByIdAndUpdate(
-          id,
-          {
-            $inc: {
-              favoriteCount: -1
-            }
-          },
-          {
-            // set new to true to return the updated doc
-            new: true
-          }
-        );
-      } else {
-        // if the user doesn't exist in the list
-        // add them to the list and increment the favoriteCount by 1
-        return await models.Note.findByIdAndUpdate(
-          id,
-          {
-            $push: {
-              favoritedBy: mongoose.Types.ObjectId(user.id)
-            },
-            $inc: {
-              favoriteCount: 1
-            }
-          },
-          {
-            new: true
-          }
-        );
-      }
-    },
-    
-    deactivateNote: async (parent, { content, id}, { models, user }) => {
+    deactivateList: async (parent, { listName, id}, { models, user }) => {
       // if not a user, throw an Authentication error
       if (!user) {
-        throw new AuthenticationError('You must be signed in to update a note');
+        throw new AuthenticationError('You must be signed in to update a list');
       }
 
-      // find the note
-      const note = await models.Note.findById(id);
-      // if the note owner and the current user don't match, throw a forbidden error
-      if (note && String(note.author) !== user.id) {
-        throw new ForbiddenError("You don't have the permission to upate the note");
+      // find the list
+      const list = await models.List.findById(id);
+      // if the list owner and the current user don't match, throw a forbidden error
+      if (list && String(list.creator) !== user.id) {
+        throw new ForbiddenError("You don't have the permission to upate the list");
       }
 
-      // update the note in the db and return the updated note
-      return await models.Note.findOneAndUpdate(
+      // update the list in the db and return the updated list
+      return await models.List.findOneAndUpdate(
           {
               _id: id,
           },
@@ -196,21 +149,21 @@ module.exports = {
       );
     },
 
-    activateNote: async (parent, { content, id}, { models, user }) => {
+    activateList: async (parent, { listName, id}, { models, user }) => {
       // if not a user, throw an Authentication error
       if (!user) {
-        throw new AuthenticationError('You must be signed in to update a note');
+        throw new AuthenticationError('You must be signed in to update a list');
       }
 
-      // find the note
-      const note = await models.Note.findById(id);
-      // if the note owner and the current user don't match, throw a forbidden error
-      if (note && String(note.author) !== user.id) {
-        throw new ForbiddenError("You don't have the permission to upate the note");
+      // find the list
+      const list = await models.List.findById(id);
+      // if the list owner and the current user don't match, throw a forbidden error
+      if (list && String(list.author) !== user.id) {
+        throw new ForbiddenError("You don't have the permission to upate the list");
       }
 
-      // update the note in the db and return the updated note
-      return await models.Note.findOneAndUpdate(
+      // update the list in the db and return the updated list
+      return await models.List.findOneAndUpdate(
           {
               _id: id,
           },
