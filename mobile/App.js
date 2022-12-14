@@ -5,6 +5,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import SettingsScreen from './screens/settings';
+import Favorites from './screens/favorites';
+
+// Apollo libraries import
+//import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
 function HomeScreen() {
   return (
@@ -26,10 +30,14 @@ export default function App() {
 
             if (route.name === 'Home') {
               iconName = focused
-                ? 'ios-information-circle'
-                : 'ios-information-circle-outline';
+                ? 'ios-home'
+                : 'ios-home-outline';
             } else if (route.name === 'Settings') {
               iconName = focused ? 'ios-list' : 'ios-list-outline';
+            } else if (route.name === 'Favorites') {
+              iconName = focused ? 'ios-heart' : 'ios-heart-outline';
+            } else if (route.name === 'Grocery List') {
+              iconName = focused ? 'ios-cart' : 'ios-cart-outline';
             }
 
             // You can return any component that you like here!
@@ -40,7 +48,10 @@ export default function App() {
         })}
       >
         <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Grocery List" component={HomeScreen} />
+        <Tab.Screen name="Favorites" component={Favorites} />
         <Tab.Screen name="Settings" component={SettingsScreen} />
+        
       </Tab.Navigator>
     </NavigationContainer>
   );
