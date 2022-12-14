@@ -1,14 +1,25 @@
 // code for user to be able to change their account information
 
-import React from "react";
-import { Text, View } from 'react-native';
+import React from 'react';
+import { View, Button } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
 
-function SettingsScreen() {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Details Screen</Text>
-      </View>
+const SettingsScreen = props => {
+  const signOut = () => {
+    SecureStore.deleteItemAsync('token').then(
+      props.navigation.navigate('Auth')
     );
-  }
+  };
+
+  return (
+    <View>
+      <Button title="Sign Out" onPress={signOut} />
+    </View>
+  );
+};
+
+SettingsScreen.navigationOptions = {
+  title: 'Settings'
+};
 
 export default SettingsScreen;
