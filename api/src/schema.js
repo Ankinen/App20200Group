@@ -71,9 +71,10 @@ type Mutation {
     newFamily(familyName: String!): Family!
     deleteFamily(id: ID!): Boolean!
     updateFamily(id: ID!, familyName: String!): Family!
-    signUp(username: String!, email: String!, password: String!): String!
+    signUp(username: String!, password: String!): String!
     logIn(username: String!, email: String!, password: String!): String!
     newItem(itemName: String!, quantity: String!): String!
+    updateItem(id: ID!, )
     deactivateItem(id: ID): Item!
     activateItem(id: ID): Item!
     

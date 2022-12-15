@@ -95,7 +95,7 @@ module.exports = {
         }
     },
 
-    logIn: async (parent, { username, email, password }, { models }) => {
+    logIn: async (parent, { username, password }, { models }) => {
       if (email) {
         // normalize email address
         email = email.trim().toLowerCase();
