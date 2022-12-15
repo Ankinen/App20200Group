@@ -10,7 +10,7 @@ require('dotenv').config();
 // API mutation code:
 
 module.exports = {
-    newList: async (parent, args, { models, user, family }) => {
+    newList: async (parent, args, { models, user }) => {
       // if there is no user on the context, throw an authentication error
       if (!user) {
         throw new AuthenticationError('You must be signed in to create a list');
@@ -19,7 +19,6 @@ module.exports = {
       return await models.List.create({
           listName,
           creator: mongoose.Types.ObjectId(user.id),
-          familyName: mongoose.Types.ObjectId(family.id),
           disabled: false
       });
     },
@@ -98,7 +97,7 @@ module.exports = {
     logIn: async (parent, { username, password }, { models }) => {
       if (email) {
         // normalize email address
-        email = email.trim().toLowerCase();
+        let email = email.trim().toLowerCase();
       }
   
       const user = await models.User.findOne({
